@@ -9,7 +9,7 @@ namespace RizRiver.Linq.LinqCondition
     /// 条件を表現するクラス
     /// </summary>
     [Serializable]
-    public class Condition
+    public class Condition : ICondition
     {
         /// <summary>
         /// 項目名

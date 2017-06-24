@@ -14,19 +14,21 @@ namespace RizRiver.Linq.LinqCondition
     [Serializable]
     public class ConditionChain
     {
-        private List<ConditionWithChainInfoGroup> _conditionGroupList;
+        //private List<ConditionWithChainInfoGroup> _conditionGroupList;
 
-        /// <summary>
-        /// このインスタンスが管理する条件グループ群を取得する
-        /// </summary>
-        internal ConditionWithChainInfoGroup[] Groups { get { return _conditionGroupList.ToArray(); } }
+        ///// <summary>
+        ///// このインスタンスが管理する条件グループ群を取得する
+        ///// </summary>
+        //internal ConditionWithChainInfoGroup[] Groups { get { return _conditionGroupList.ToArray(); } }
+
+        public ConditionGroup ConditionGroup { get; private set; }
 
         /// <summary>
         /// プライベート コンストラクタ
         /// </summary>
         private ConditionChain()
         {
-            _conditionGroupList = new List<ConditionWithChainInfoGroup>();
+            //_conditionGroupList = new List<ConditionWithChainInfoGroup>();
         }
 
         /// <summary>
@@ -35,9 +37,10 @@ namespace RizRiver.Linq.LinqCondition
         /// <param name="condition">条件</param>
         private ConditionChain(Condition condition)
         {
-            _conditionGroupList = new List<ConditionWithChainInfoGroup>();
-            _conditionGroupList.Add(new ConditionWithChainInfoGroup());
-            _conditionGroupList.Last().AddAndAlso(condition);
+            this.ConditionGroup = new ConditionGroup(condition);
+            //_conditionGroupList = new List<ConditionWithChainInfoGroup>();
+            //_conditionGroupList.Add(new ConditionWithChainInfoGroup());
+            //_conditionGroupList.Last().AddAndAlso(condition);
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace RizRiver.Linq.LinqCondition
         /// <summary>
         /// 空の条件が保持されているかどうかを取得する
         /// </summary>
-        public bool IsEmpty { get { return _conditionGroupList.Count == 0; } }
+        public bool IsEmpty { get { return this.ConditionGroup == null;/*return _conditionGroupList.Count == 0;*/ } }
 
         /// <summary>
         /// ConditionChainインスタンスを生成する
@@ -70,9 +73,12 @@ namespace RizRiver.Linq.LinqCondition
         {
             if (this.IsEmpty)
             {
-                _conditionGroupList.Add(new ConditionWithChainInfoGroup());
+                this.ConditionGroup = new ConditionGroup(condition);
             }
-            _conditionGroupList.Last().AddAndAlso(condition);   
+            else
+            {
+                this.ConditionGroup.AddChild(condition, ChainType.AndAlso);
+            }
             return this;
         }
 
@@ -85,9 +91,12 @@ namespace RizRiver.Linq.LinqCondition
         {
             if (this.IsEmpty)
             {
-                _conditionGroupList.Add(new ConditionWithChainInfoGroup());
+                this.ConditionGroup = new ConditionGroup(condition);
             }
-            _conditionGroupList.Last().AddOrElse(condition);
+            else
+            {
+                this.ConditionGroup.AddChild(condition, ChainType.OrElse);
+            }
             return this;
         }
 
@@ -98,20 +107,29 @@ namespace RizRiver.Linq.LinqCondition
         /// <returns>結合した結果のConditionChainインスタンス</returns>
         public ConditionChain AndAlso(ConditionChain conditionChain)
         {
-            // 結合しようとするChainが空だった場合は結合しない
-            if (conditionChain.IsEmpty)
-            {
-                return this;
-            }
-
             if (this.IsEmpty)
             {
-                _conditionGroupList.Add(conditionChain.Groups.Last());
-                return this;
+                this.ConditionGroup = new ConditionGroup(conditionChain.ConditionGroup);
+            }
+            else
+            {
+                this.ConditionGroup.AddChild(conditionChain.ConditionGroup, ChainType.AndAlso);
             }
 
-            _conditionGroupList.Last().Next = ChainType.AndAlso;
-            _conditionGroupList.Add(conditionChain.Groups.Last());
+            //// 結合しようとするChainが空だった場合は結合しない
+            //if (conditionChain.IsEmpty)
+            //{
+            //    return this;
+            //}
+
+            //if (this.IsEmpty)
+            //{
+            //    _conditionGroupList.Add(conditionChain.Groups.Last());
+            //    return this;
+            //}
+
+            //_conditionGroupList.Last().Next = ChainType.AndAlso;
+            //_conditionGroupList.Add(conditionChain.Groups.Last());
             return this;
         }
 
@@ -122,20 +140,14 @@ namespace RizRiver.Linq.LinqCondition
         /// <returns>結合した結果のConditionChainインスタンス</returns>
         public ConditionChain OrElse(ConditionChain conditionChain)
         {
-            // 結合しようとするChainが空だった場合は結合しない
-            if (conditionChain.IsEmpty)
-            {
-                return this;
-            }
-
             if (this.IsEmpty)
             {
-                _conditionGroupList.Add(conditionChain.Groups.Last());
-                return this;
+                this.ConditionGroup = new ConditionGroup(conditionChain.ConditionGroup);
             }
-
-            _conditionGroupList.Last().Next = ChainType.OrElse;
-            _conditionGroupList.Add(conditionChain.Groups.Last());
+            else
+            {
+                this.ConditionGroup.AddChild(conditionChain.ConditionGroup, ChainType.OrElse);
+            }
             return this;
         }
 

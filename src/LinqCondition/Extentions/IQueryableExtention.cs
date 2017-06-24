@@ -38,10 +38,10 @@ namespace RizRiver.Linq.LinqCondition
         /// <returns>条件を満たす、入力シーケンスの要素を含む System.Linq.IQueryable&lt;T&gt;。</returns>
         public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> source, ConditionChain conditionChain)
         {
-            if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
-            {
-                return source;
-            }
+            //if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
+            //{
+            //    return source;
+            //}
 
             // 条件を元に式ツリーを組み立て、Whereメソッドを呼び出す
             return source.Where(ExpressionUtil.CreateConditionPredicate<TSource>(conditionChain));
@@ -74,10 +74,10 @@ namespace RizRiver.Linq.LinqCondition
         /// <returns>指定された条件でソース シーケンスの要素がテストに合格する場合は true。それ以外の場合は false。</returns>
         public static bool Any<TSource>(this IQueryable<TSource> source, ConditionChain conditionChain)
         {
-            if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
-            {
-                return System.Linq.Queryable.Any(source);
-            }
+            //if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
+            //{
+            //    return System.Linq.Queryable.Any(source);
+            //}
 
             return source.Any(ExpressionUtil.CreateConditionPredicate<TSource>(conditionChain));
         }
@@ -108,10 +108,10 @@ namespace RizRiver.Linq.LinqCondition
         /// <returns>条件を満たす、シーケンス内の要素数を表す数値。</returns>
         public static int Count<TSource>(this IQueryable<TSource> source, ConditionChain conditionChain)
         {
-            if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
-            {
-                return System.Linq.Queryable.Count(source);
-            }
+            //if (conditionChain.IsEmpty || conditionChain.Groups == null || conditionChain.Groups.Length == 0)
+            //{
+            //    return System.Linq.Queryable.Count(source);
+            //}
 
             return source.Count(ExpressionUtil.CreateConditionPredicate<TSource>(conditionChain));
         }

@@ -51,8 +51,37 @@ namespace Sample
             this.txtExpression.Text = string.Empty;
         }
 
+        private void test()
+        {
+            ConditionChain chainA = ConditionChain.Empty;
+            ConditionChain chainB = ConditionChain.Empty;
+            ConditionChain chainC = ConditionChain.Empty;
+            ConditionChain chainD = ConditionChain.Empty;
+
+            chainA.AndAlso(Condition.Create("Age", 1));
+            chainA.OrElse(Condition.Create("Age", 2));
+
+            chainB.AndAlso(Condition.Create("BloodType", "A"));
+            chainB.OrElse(Condition.Create("BloodType", "B"));
+            chainB.OrElse(Condition.Create("BloodType", "O"));
+
+            chainC.AndAlso(Condition.Create("Name", "Qqqq"));
+            chainC.AndAlso(Condition.Create("Name", "Zzzz"));
+            chainC.OrElse(Condition.Create("Name", "Yyyyy"));
+
+            chainD.AndAlso(Condition.Create("IsMale", true));
+            chainD.AndAlso(Condition.Create("IsMale", false));
+
+            chainA.AndAlso(chainB);
+            chainC.OrElse(chainD);
+            chainA.OrElse(chainC);
+
+            string aa = chainA.GetExpression<Person>().ToString();
+        }
+
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            test();
             ConditionChain conditionChain = ConditionChain.Empty;
 
             if (txtName.Text != string.Empty)

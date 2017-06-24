@@ -62,30 +62,39 @@ namespace RizRiver.Linq.LinqCondition.Utils
 
             // 条件のグループ単位で条件式を構築し、bodyListで保持しておく
             List<Expression> bodyList = new List<Expression>();
-            foreach (var conditionGroup in conditionChain.Groups)
-            {
-                List<Expression> bodies = new List<Expression>();
-                Array.ForEach(conditionGroup.Conditions, c => bodies.Add(CreateBodyExpression(param, c.Condition)));
-
-                Expression bodyTmp = bodies[0];
-                for (int i = 1; i < bodies.Count; i++)
-                {
-                    bodyTmp = JoinExpression(bodyTmp, bodies[i], conditionGroup.Conditions[i - 1].Next);
-                }
-                bodyList.Add(bodyTmp);
-            }
-
-            // bodyListで保持された条件式同士を、適切な演算子で連結し、最終的な式を構築する
-            Expression body = bodyList[0];
-            for (int i = 1; i < bodyList.Count; i++)
-            {
-                body = JoinExpression(body, bodyList[i], conditionChain.Groups[i - 1].Next);
-            }
-
+            Expression body = CreateInner<TSource>(conditionChain.ConditionGroup, param);
             // debug
-            //System.Diagnostics.Debug.WriteLine("Expression Created. -- " + Expression.Lambda<Func<TSource, bool>>(body, param));
+            System.Diagnostics.Debug.WriteLine("Expression Created. -- " + Expression.Lambda<Func<TSource, bool>>(body, param));
 
             return Expression.Lambda<Func<TSource, bool>>(body, param);
+        }
+
+        private static Expression CreateInner<TSource>(ConditionGroup group, ParameterExpression param)
+        {
+            List<Tuple<Expression, ChainType>> bodyList = new List<Tuple<Expression, ChainType>>();
+            
+            foreach (var condGroup in group.GroupList)
+            {
+                
+                var childGroup = condGroup.Item1 as ConditionGroup;
+                if (childGroup != null)
+                {
+                    bodyList.Add(Tuple.Create(CreateInner<TSource>(childGroup, param), condGroup.Item2));
+                }
+                else
+                {
+                    bodyList.Add(Tuple.Create(CreateBodyExpression(param,(Condition)condGroup.Item1), condGroup.Item2));
+                }
+                
+            }
+            // bodyListで保持された条件式同士を、適切な演算子で連結し、最終的な式を構築する
+            Expression body = bodyList[0].Item1;
+            for (int i = 1; i < bodyList.Count; i++)
+            {
+                //body = JoinExpression(body, bodyList[i].Item1, bodyList[i].Item2);
+                body = Expression.MakeBinary(bodyList[i].Item2 == ChainType.AndAlso ? ExpressionType.AndAlso : ExpressionType.OrElse, body, bodyList[i].Item1);
+            }
+            return body;
         }
 
         /// <summary>
