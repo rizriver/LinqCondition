@@ -86,5 +86,58 @@ namespace RizRiver.Linq.LinqCondition
         {
             return new Condition(name, value) { Like = likeType };
         }
+
+        public override string ToString()
+        {
+            Func<CompareType, string> getOp = c =>
+            {
+                switch (c)
+                {
+                    case CompareType.Equal:
+                        return "==";
+                    case CompareType.NotEqual:
+                        return "!=";
+                    case CompareType.GreaterThan:
+                        return ">";
+                    case CompareType.GreaterThanOrEqual:
+                        return ">=";
+                    case CompareType.LessThan:
+                        return "<";
+                    case CompareType.LessThanOrEqual:
+                        return "<=";
+                }
+                return null;
+            };
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var value in this.Values)
+            {
+                sb.Append("[").Append(this.Name).Append("]");
+
+                if (this.Like == LikeTypes.None)
+                {
+                    sb.Append(getOp(this.CompareType));
+                    sb.Append(value);
+                }
+                else
+                {
+                    sb.Append(" LIKE ");
+                    if ((this.Like ^ LikeTypes.Forward) == LikeTypes.Forward)
+                    {
+                        sb.Append("%");
+                    }
+                    sb.Append(value);
+                    if ((this.Like ^ LikeTypes.Backward) == LikeTypes.Backward)
+                    {
+                        sb.Append("%");
+                    }
+                    if (this.Like.HasFlag(LikeTypes.Not))
+                    {
+                        sb.Append(" == FALSE");
+                    }
+                }
+            }
+            return sb.ToString();
+        }
     }
 }
