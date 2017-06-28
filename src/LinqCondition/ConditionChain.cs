@@ -77,7 +77,7 @@ namespace RizRiver.Linq.LinqCondition
             }
             else
             {
-                this.ConditionGroup.AddChild(condition, ChainType.AndAlso);
+                this.ConditionGroup.AddCondition(condition, ChainType.AndAlso);
             }
             return this;
         }
@@ -95,7 +95,7 @@ namespace RizRiver.Linq.LinqCondition
             }
             else
             {
-                this.ConditionGroup.AddChild(condition, ChainType.OrElse);
+                this.ConditionGroup.AddCondition(condition, ChainType.OrElse);
             }
             return this;
         }
@@ -113,7 +113,7 @@ namespace RizRiver.Linq.LinqCondition
             }
             else
             {
-                this.ConditionGroup.AddChild(conditionChain.ConditionGroup, ChainType.AndAlso);
+                this.ConditionGroup.AddCondition(conditionChain.ConditionGroup, ChainType.AndAlso);
             }
 
             //// 結合しようとするChainが空だった場合は結合しない
@@ -146,7 +146,7 @@ namespace RizRiver.Linq.LinqCondition
             }
             else
             {
-                this.ConditionGroup.AddChild(conditionChain.ConditionGroup, ChainType.OrElse);
+                this.ConditionGroup.AddCondition(conditionChain.ConditionGroup, ChainType.OrElse);
             }
             return this;
         }

@@ -110,6 +110,7 @@ namespace RizRiver.Linq.LinqCondition
             };
 
             StringBuilder sb = new StringBuilder();
+            sb.Append(this.Values.Length > 1 ? "(" : string.Empty);
             foreach (var value in this.Values)
             {
                 sb.Append("[").Append(this.Name).Append("]");
@@ -137,6 +138,7 @@ namespace RizRiver.Linq.LinqCondition
                     }
                 }
             }
+            sb.Append(this.Values.Length > 1 ? ")" : string.Empty);
             return sb.ToString();
         }
     }
