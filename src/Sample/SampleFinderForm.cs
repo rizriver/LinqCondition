@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using RizRiver.Linq.LinqCondition;
+using RizRiver.ConditionHelper;
 
 namespace Sample
 {
@@ -53,81 +53,81 @@ namespace Sample
 
         private void test()
         {
-            ConditionChain chainA = ConditionChain.Empty;
-            ConditionChain chainB = ConditionChain.Empty;
-            ConditionChain chainC = ConditionChain.Empty;
-            ConditionChain chainD = ConditionChain.Empty;
+            //ConditionChain chainA = ConditionChain.Empty;
+            //ConditionChain chainB = ConditionChain.Empty;
+            //ConditionChain chainC = ConditionChain.Empty;
+            //ConditionChain chainD = ConditionChain.Empty;
 
-            chainA.AndAlso(Condition.Create("Age", 1));
-            chainA.OrElse(Condition.Create("Age", 2));
+            //chainA.AndAlso(Condition.Create("Age", 1));
+            //chainA.OrElse(Condition.Create("Age", 2));
 
-            chainB.AndAlso(Condition.Create("BloodType", "A"));
-            chainB.OrElse(Condition.Create("BloodType", "B"));
-            chainB.OrElse(Condition.Create("BloodType", "O"));
+            //chainB.AndAlso(Condition.Create("BloodType", "A"));
+            //chainB.OrElse(Condition.Create("BloodType", "B"));
+            //chainB.OrElse(Condition.Create("BloodType", "O"));
 
-            chainC.AndAlso(Condition.Create("Name", "Qqqq"));
-            chainC.AndAlso(Condition.Create("Name", "Zzzz"));
-            chainC.OrElse(Condition.Create("Name", "Yyyyy"));
+            //chainC.AndAlso(Condition.Create("Name", "Qqqq"));
+            //chainC.AndAlso(Condition.Create("Name", "Zzzz"));
+            //chainC.OrElse(Condition.Create("Name", "Yyyyy"));
 
-            chainD.AndAlso(Condition.Create("IsMale", true));
-            chainD.AndAlso(Condition.Create("IsMale", false));
+            //chainD.AndAlso(Condition.Create("IsMale", true));
+            //chainD.AndAlso(Condition.Create("IsMale", false));
 
-            chainA.AndAlso(chainB);
-            chainC.OrElse(chainD);
-            chainA.OrElse(chainC);
+            //chainA.AndAlso(chainB);
+            //chainC.OrElse(chainD);
+            //chainA.OrElse(chainC);
 
-            string aa = chainA.GetExpression<Person>().ToString();
+            //string aa = chainA.GetExpression<Person>().ToString();
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
             test();
-            ConditionChain conditionChain = ConditionChain.Empty;
+            //ConditionChain conditionChain = ConditionChain.Empty;
 
-            if (txtName.Text != string.Empty)
-            {
-                Condition condition;
-                if (rdbExactMatch.Checked)
-                {
-                    condition = Condition.Create("Name", txtName.Text);
-                }
-                else
-                {
-                    condition = Condition.Create("Name", txtName.Text, LikeTypes.Part);
-                }
-                conditionChain.AndAlso(condition);
-            }
+            //if (txtName.Text != string.Empty)
+            //{
+            //    Condition condition;
+            //    if (rdbExactMatch.Checked)
+            //    {
+            //        condition = Condition.Create("Name", txtName.Text);
+            //    }
+            //    else
+            //    {
+            //        condition = Condition.Create("Name", txtName.Text, LikeTypes.Part);
+            //    }
+            //    conditionChain.AndAlso(condition);
+            //}
 
-            if (!this.rdbGenderBoth.Checked)
-            {
-                conditionChain.AndAlso(Condition.Create("IsMale", this.rdbGenderMale.Checked));
-            }
+            //if (!this.rdbGenderBoth.Checked)
+            //{
+            //    conditionChain.AndAlso(Condition.Create("IsMale", this.rdbGenderMale.Checked));
+            //}
 
-            if (txtAgeFrom.Text != string.Empty)
-            {
-                conditionChain.AndAlso(Condition.Create("Age", int.Parse(txtAgeFrom.Text), CompareType.GreaterThanOrEqual));
-            }
+            //if (txtAgeFrom.Text != string.Empty)
+            //{
+            //    conditionChain.AndAlso(Condition.Create("Age", int.Parse(txtAgeFrom.Text), CompareType.GreaterThanOrEqual));
+            //}
 
-            if (txtAgeTo.Text != string.Empty)
-            {
-                conditionChain.AndAlso(Condition.Create("Age", int.Parse(txtAgeTo.Text), CompareType.LessThanOrEqual));
-            }
+            //if (txtAgeTo.Text != string.Empty)
+            //{
+            //    conditionChain.AndAlso(Condition.Create("Age", int.Parse(txtAgeTo.Text), CompareType.LessThanOrEqual));
+            //}
 
-            if (lstBloodType.SelectedItems.Count != 0)
-            {
-                ConditionChain bloodTypeCondChain = ConditionChain.Empty;
-                foreach (string bloodType in lstBloodType.SelectedItems)
-                {
-                    bloodTypeCondChain.OrElse(Condition.Create("BloodType", bloodType));
-                }
-                conditionChain.AndAlso(bloodTypeCondChain);
-            }
+            //if (lstBloodType.SelectedItems.Count != 0)
+            //{
+            //    ConditionChain bloodTypeCondChain = ConditionChain.Empty;
+            //    foreach (string bloodType in lstBloodType.SelectedItems)
+            //    {
+            //        bloodTypeCondChain.OrElse(Condition.Create("BloodType", bloodType));
+            //    }
+            //    conditionChain.AndAlso(bloodTypeCondChain);
+            //}
 
-            // debug info.
-            this.txtExpression.Text = conditionChain.IsEmpty ? "" : conditionChain.GetExpression<Person>().ToString();
+            //// debug info.
+            //this.txtExpression.Text = conditionChain.IsEmpty ? "" : conditionChain.GetExpression<Person>().ToString();
 
-            Person[] searchResult = this.SearchByCondition(conditionChain);
-            this.dataGridView1.DataSource = searchResult;
+            //Person[] searchResult = this.SearchByCondition(conditionChain);
+            //this.dataGridView1.DataSource = searchResult;
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -135,9 +135,9 @@ namespace Sample
             this.InitSearchCondition();
         }
 
-        private Person[] SearchByCondition(ConditionChain conditionChain)
+        private Person[] SearchByCondition(ConditionGroup conditionGroup)
         {
-            return _dataStore.Where(conditionChain).ToArray();
+            return _dataStore.Where(conditionGroup).ToArray();
         }
 
     }

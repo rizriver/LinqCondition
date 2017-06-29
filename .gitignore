@@ -1,5 +1,4 @@
-src/LinqCondition/obj/
-src/Sample/obj/
 *.suo
-/src/LinqCondition/bin/Debug
-/src/Sample/bin/Debug
+*.user
+bin/
+obj/
